@@ -17,4 +17,9 @@ class CheckoutTest extends FlatSpec with Matchers {
     val checkoutService = new CheckoutService(Nil)
     checkoutService.getBasket.size should be(0)
   }
+
+  "A checkout system" must "have only Apple or Orange, non-existent item is ignored" in {
+    val checkoutService = new CheckoutService(List("ORANGE", "APPLE", "ORANGE", "NON-EXISTENCE"))
+    checkoutService.getBasket.size should be(3)
+  }
 }

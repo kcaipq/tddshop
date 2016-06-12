@@ -8,9 +8,12 @@ import scala.annotation.tailrec
 class CheckoutService(items: List[String]) extends ItemRepository {
 
 
-  def getBasket: List[String] = {
-    items
-  }
+  def getBasket = items.foldLeft(List.empty[Item])((savedItems: List[Item], x: String) =>
+    getItem(x) match {
+      case Some(e) => e :: savedItems
+      case None => savedItems
+    }
+  )
 }
 
 /**
