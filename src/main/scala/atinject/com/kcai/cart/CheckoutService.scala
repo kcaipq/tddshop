@@ -7,13 +7,14 @@ import scala.annotation.tailrec
   */
 class CheckoutService(items: List[String]) extends ItemRepository {
 
+  private lazy val offerService = new OfferService
 
   def basket = items.foldLeft(List.empty[Item])((savedItems: List[Item], x: String) =>
     getItem(x) match {
       case None => savedItems
       case Some(e) => e :: savedItems
     }
-  )
+  ).groupBy(w => w)
 
   def checkOut = {
     @tailrec
@@ -21,10 +22,11 @@ class CheckoutService(items: List[String]) extends ItemRepository {
       savedItems match {
         case Nil => total
         case x :: tail =>
-          sum(tail, total + x.price)
+          val col = basket.getOrElse(x, Nil)
+          sum(tail, total + offerService.calculate(col.size, x.price, x.offer))
       }
     }
-    sum(basket, 0.00)
+    sum(basket.keys.toList, 0.00)
   }
 }
 
@@ -32,20 +34,20 @@ class CheckoutService(items: List[String]) extends ItemRepository {
   * Simple in-memory items repository
   */
 object ItemRepository {
-  val items = Map(
-    "APPLE" -> Item("APPLE", 0.60),
-    "ORANGE" -> Item("ORANGE", 0.25)
+  val items: Map[String, Item] = Map(
+    "APPLE" -> Item("APPLE", 0.60, Some(new BuyForPriceOfOffer(2, 1))),
+    "ORANGE" -> Item("ORANGE", 0.25, Some(new BuyForPriceOfOffer(3, 2)))
   )
 }
 
 sealed trait ItemRepository {
-  import ItemRepository._
+  import ItemRepository.items
 
   def getItem(name: String) = {
     items.get(name)
   }
 }
 
-case class Item(name: String, price: BigDecimal) {
+case class Item(name: String, price: BigDecimal, offer: Option[Offerable]) {
   override val toString = name
 }
