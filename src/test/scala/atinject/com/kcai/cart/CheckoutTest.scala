@@ -53,4 +53,54 @@ class CheckoutTest extends FlatSpec with Matchers {
     val checkoutService = new CheckoutService(List("ORANGE"))
     checkoutService.checkOut should be(0.25)
   }
+
+  "A checkout system" must "calculate the total price of saved items in basket with mixed selections" in {
+    val checkoutService = new CheckoutService(List("ORANGE", "APPLE", "ORANGE"))
+    checkoutService.checkOut should be(1.10)
+  }
+
+
+
+  
+  "A checkout system" should "calculate BuyOneGetOneFree offer for 2 Apples" in {
+    val checkoutService = new CheckoutService(List("ORANGE", "APPLE", "APPLE"))
+    checkoutService.checkOut should be(0.85)
+  }
+
+  "A checkout system" should "calculate BuyOneGetOneFree offer for 3 Apples" in {
+    val checkoutService = new CheckoutService(List("ORANGE", "APPLE", "APPLE", "APPLE"))
+    checkoutService.checkOut should be(1.45)
+  }
+
+  "A checkout system" should "calculate BuyOneGetOneFree offer for 4 Apples" in {
+    val checkoutService = new CheckoutService(List("ORANGE", "APPLE", "APPLE", "APPLE", "APPLE"))
+    checkoutService.checkOut should be(1.45)
+  }
+
+  "A checkout system" should "calculate BuyThreeForTwo offer for 1 Oranges" in {
+    val checkoutService = new CheckoutService(List("ORANGE"))
+    checkoutService.checkOut should be(0.25)
+  }
+
+  "A checkout system" should "calculate BuyThreeForTwo offer for 2 Oranges" in {
+    val checkoutService = new CheckoutService(List("ORANGE", "ORANGE"))
+    checkoutService.checkOut should be(0.50)
+  }
+
+  "A checkout system" should "calculate BuyThreeForTwo offer for 3 Oranges" in {
+    val checkoutService = new CheckoutService(List("ORANGE", "ORANGE", "ORANGE"))
+    checkoutService.checkOut should be(0.50)
+  }
+
+  "A checkout system" should "calculate BuyThreeForTwo offer for 4 Oranges" in {
+    val checkoutService = new CheckoutService(List("ORANGE", "ORANGE", "ORANGE", "ORANGE"))
+    checkoutService.checkOut should be(0.75)
+  }
+
+  "A checkout system" should "calculate BuyThreeForTwo and BuyOneGetOneFree offers for mixed selections" in {
+    val checkoutService = new CheckoutService(List("ORANGE", "ORANGE", "ORANGE", "ORANGE", "APPLE", "APPLE", "APPLE"))
+    checkoutService.checkOut should be(1.95)
+  }
+
+
 }
