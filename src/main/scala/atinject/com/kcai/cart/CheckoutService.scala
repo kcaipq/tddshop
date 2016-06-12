@@ -7,6 +7,8 @@ import scala.annotation.tailrec
   */
 class CheckoutService(items: List[String]) extends ItemRepository {
 
+  implicit val itemRepo = ItemRepository.items
+
   private lazy val offerService = new OfferService
 
   def basket = items.foldLeft(List.empty[Item])((savedItems: List[Item], x: String) =>
@@ -41,9 +43,7 @@ object ItemRepository {
 }
 
 sealed trait ItemRepository {
-  import ItemRepository.items
-
-  def getItem(name: String) = {
+  def getItem(name: String)(implicit items: Map[String, Item]) = {
     items.get(name)
   }
 }
