@@ -8,12 +8,24 @@ import scala.annotation.tailrec
 class CheckoutService(items: List[String]) extends ItemRepository {
 
 
-  def getBasket = items.foldLeft(List.empty[Item])((savedItems: List[Item], x: String) =>
+  def basket = items.foldLeft(List.empty[Item])((savedItems: List[Item], x: String) =>
     getItem(x) match {
-      case Some(e) => e :: savedItems
       case None => savedItems
+      case Some(e) => e :: savedItems
     }
   )
+
+  def checkOut = {
+    @tailrec
+    def sum(savedItems: List[Item], total: BigDecimal): BigDecimal = {
+      savedItems match {
+        case Nil => total
+        case x :: tail =>
+          sum(tail, total + x.price)
+      }
+    }
+    sum(basket, 0.00)
+  }
 }
 
 /**
